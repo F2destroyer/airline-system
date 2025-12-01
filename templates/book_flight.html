@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Reservar Voo - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2><i class="fas fa-shopping-cart"></i> Reservar Voo</h2>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <strong>Detalhes do Voo</strong>
+                </div>
+                <div class="card-body">
+                    <h4>{{ flight.codigo }} - {{ flight.tipo_aeronave }}</h4>
+                    <p class="lead">
+                        <i class="fas fa-plane-departure"></i> {{ flight.origem }}
+                        <i class="fas fa-arrow-right mx-2"></i>
+                        <i class="fas fa-plane-arrival"></i> {{ flight.destino }}
+                    </p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-road"></i> Distância: {{ flight.milhas }} milhas</li>
+                        <li><i class="fas fa-chair"></i> Assentos disponíveis: {{ flight.assentos_disponiveis }}</li>
+                    </ul>
+                    <h3 class="text-success">Preço: R$ {{ "%.2f"|format(flight.preco) }}</h3>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <strong>Dados do Passageiro</strong>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('confirm_booking') }}">
+                        <input type="hidden" name="flight_codes" value="{{ flight.codigo }}">
+                        
+                        <div class="mb-3">
+                            <label for="cpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="cpf" name="cpf" 
+                                   placeholder="000.000.000-00" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="nome" name="nome" 
+                                   placeholder="Digite seu nome completo" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="data_viagem" class="form-label">Data da Viagem</label>
+                            <input type="date" class="form-control" id="data_viagem" name="data_viagem" required>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Confirmar Reserva
+                            </button>
+                            <a href="{{ url_for('search_flights') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5><i class="fas fa-info-circle"></i> Informações</h5>
+                    <hr>
+                    <p><strong>Acumule milhas!</strong></p>
+                    <p>Esta reserva acumulará <strong>{{ flight.milhas }} milhas</strong> em sua conta.</p>
+                    <hr>
+                    <p><small>O código de reserva será gerado após a confirmação e poderá ser usado para consultar o status do seu voo.</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

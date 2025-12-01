@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{% if action == 'add' %}Novo Usuário{% else %}Editar Usuário{% endif %} - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-plus"></i>
+                        {% if action == 'add' %}Cadastrar Novo Usuário{% else %}Editar Usuário{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nome de Usuário</label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Digite o nome de usuário" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Digite a senha" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Digite o nome completo">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Função</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="staff">Funcionário</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save"></i> 
+                                {% if action == 'add' %}Cadastrar{% else %}Salvar{% endif %}
+                            </button>
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

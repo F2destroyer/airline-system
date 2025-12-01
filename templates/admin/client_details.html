@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Cliente - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2><i class="fas fa-user"></i> Detalhes do Cliente</h2>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <strong>{{ client.nome }}</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>CPF:</strong> {{ client.cpf }}</p>
+                            <p><strong>Cliente desde:</strong> {{ client.data_cadastro }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Milhas Acumuladas:</strong> 
+                                <span class="badge bg-success fs-5">{{ client.milhas_acumuladas|default(0) }}</span>
+                            </p>
+                            <p><strong>Total de Reservas:</strong> {{ client.reservas|length }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Histórico de Reservas</strong>
+                </div>
+                <div class="card-body">
+                    {% if reservations %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Voos</th>
+                                    <th>Data Viagem</th>
+                                    <th>Valor</th>
+                                    <th>Milhas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reservation in reservations %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('admin_reservation_details', reservation_code=reservation.codigo_reserva) }}">
+                                            {{ reservation.codigo_reserva }}
+                                        </a>
+                                    </td>
+                                    <td>{{ reservation.voos|join(', ') }}</td>
+                                    <td>{{ reservation.data_viagem }}</td>
+                                    <td>R$ {{ "%.2f"|format(reservation.preco_total) }}</td>
+                                    <td>{{ reservation.milhas_acumuladas }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Nenhuma reserva registrada.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <a href="{{ url_for('admin_clients') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="fas fa-road fa-4x text-primary mb-3"></i>
+                    <h3>{{ client.milhas_acumuladas|default(0) }}</h3>
+                    <p class="text-muted">Milhas Acumuladas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

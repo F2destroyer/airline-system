@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Buscar Clientes - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2><i class="fas fa-search"></i> Buscar Clientes</h2>
+    <p class="text-muted">Utilize a Árvore B para buscar clientes por CPF, nome ou inicial</p>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin_search_clients') }}">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="search_type" class="form-label">Tipo de Busca</label>
+                        <select class="form-select" id="search_type" name="search_type">
+                            <option value="cpf" {% if search_type == 'cpf' %}selected{% endif %}>Por CPF</option>
+                            <option value="nome" {% if search_type == 'nome' %}selected{% endif %}>Por Nome Exato</option>
+                            <option value="inicial" {% if search_type == 'inicial' %}selected{% endif %}>Por Inicial do Nome</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="search_value" class="form-label">Valor da Busca</label>
+                        <input type="text" class="form-control" id="search_value" name="search_value" 
+                               value="{{ search_value|default('') }}"
+                               placeholder="Digite o CPF, nome ou inicial" required>
+                    </div>
+                    <div class="col-md-2 mb-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if clients is not none %}
+    <h4>Resultados da Busca</h4>
+    {% if clients %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>CPF</th>
+                            <th>Nome</th>
+                            <th>Reservas</th>
+                            <th>Milhas</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in clients %}
+                        <tr>
+                            <td>{{ client.cpf }}</td>
+                            <td>{{ client.nome }}</td>
+                            <td>{{ client.reservas|length }}</td>
+                            <td>{{ client.milhas_acumuladas|default(0) }}</td>
+                            <td>
+                                <a href="{{ url_for('admin_client_details', cpf=client.cpf) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i> Detalhes
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i> Nenhum cliente encontrado.
+    </div>
+    {% endif %}
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{{ url_for('admin_clients') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para Lista de Clientes
+        </a>
+    </div>
+</div>
+{% endblock %}

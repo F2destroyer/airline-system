@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão de Voos - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-cogs"></i> Menu Admin
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('admin_dashboard') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('admin_flights') }}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-plane"></i> Voos
+                    </a>
+                    <a href="{{ url_for('admin_reservations') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-ticket-alt"></i> Reservas
+                    </a>
+                    <a href="{{ url_for('admin_clients') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-users"></i> Clientes
+                    </a>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('admin_users') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user-shield"></i> Usuários
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-plane"></i> Gestão de Voos</h2>
+                <a href="{{ url_for('admin_add_flight') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Novo Voo
+                </a>
+            </div>
+            
+            {% if flights %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Origem</th>
+                                    <th>Destino</th>
+                                    <th>Milhas</th>
+                                    <th>Preço</th>
+                                    <th>Aeronave</th>
+                                    <th>Assentos</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for flight in flights %}
+                                <tr>
+                                    <td><strong>{{ flight.codigo }}</strong></td>
+                                    <td>{{ flight.origem }}</td>
+                                    <td>{{ flight.destino }}</td>
+                                    <td>{{ flight.milhas }}</td>
+                                    <td>R$ {{ "%.2f"|format(flight.preco) }}</td>
+                                    <td>{{ flight.tipo_aeronave }}</td>
+                                    <td>
+                                        <span class="badge {% if flight.assentos_disponiveis > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ flight.assentos_disponiveis }}/{{ flight.assentos }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('admin_edit_flight', flight_code=flight.codigo) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('admin_delete_flight', flight_code=flight.codigo) }}" 
+                                              class="d-inline" onsubmit="return confirm('Confirma exclusão do voo {{ flight.codigo }}?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Nenhum voo cadastrado.
+                <a href="{{ url_for('admin_add_flight') }}" class="alert-link">Cadastrar primeiro voo</a>.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

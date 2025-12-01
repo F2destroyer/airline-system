@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes da Reserva - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2><i class="fas fa-ticket-alt"></i> Detalhes da Reserva</h2>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-{% if reservation.status == 'confirmada' %}success{% else %}secondary{% endif %} text-white">
+                    <strong>Reserva: {{ reservation.codigo_reserva }}</strong>
+                    <span class="badge bg-light text-dark float-end">{{ reservation.status|upper }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Dados do Passageiro</h5>
+                            <p><strong>Nome:</strong> {{ reservation.nome }}</p>
+                            <p><strong>CPF:</strong> {{ reservation.cpf }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Informações da Reserva</h5>
+                            <p><strong>Data da Viagem:</strong> {{ reservation.data_viagem }}</p>
+                            <p><strong>Data da Reserva:</strong> {{ reservation.data_reserva }}</p>
+                        </div>
+                    </div>
+                    
+                    <h5>Voos</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Voo</th>
+                                <th>Trecho</th>
+                                <th>Aeronave</th>
+                                <th>Milhas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flight in flights %}
+                            <tr>
+                                <td><strong>{{ flight.codigo }}</strong></td>
+                                <td>{{ flight.origem }} → {{ flight.destino }}</td>
+                                <td>{{ flight.tipo_aeronave }}</td>
+                                <td>{{ flight.milhas }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Total Pago:</strong> R$ {{ "%.2f"|format(reservation.preco_total) }}
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <strong>Milhas Acumuladas:</strong> {{ reservation.milhas_acumuladas }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <a href="{{ url_for('check_reservation') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Consultar Outra Reserva
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Voltar ao Início
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5><i class="fas fa-info-circle"></i> Informações</h5>
+                    <hr>
+                    <p>Esta reserva acumulou <strong>{{ reservation.milhas_acumuladas }} milhas</strong>.</p>
+                    <p>Consulte suas milhas totais usando seu CPF.</p>
+                    <a href="{{ url_for('check_miles') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-road"></i> Consultar Milhas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

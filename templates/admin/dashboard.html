@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Painel Administrativo - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-cogs"></i> Menu Admin
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('admin_dashboard') }}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('admin_flights') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plane"></i> Voos
+                    </a>
+                    <a href="{{ url_for('admin_reservations') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-ticket-alt"></i> Reservas
+                    </a>
+                    <a href="{{ url_for('admin_clients') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-users"></i> Clientes
+                    </a>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('admin_users') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user-shield"></i> Usuários
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+            <p class="text-muted">Bem-vindo ao painel administrativo, {{ session.get('name', 'Admin') }}!</p>
+            
+            <div class="row mb-4">
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="card bg-primary text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4>{{ stats.total_flights }}</h4>
+                                    <p class="mb-0">Voos</p>
+                                </div>
+                                <div class="display-4">
+                                    <i class="fas fa-plane"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('admin_flights') }}" class="text-white">
+                                Ver todos <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="card bg-success text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4>{{ stats.total_reservations }}</h4>
+                                    <p class="mb-0">Reservas</p>
+                                </div>
+                                <div class="display-4">
+                                    <i class="fas fa-ticket-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('admin_reservations') }}" class="text-white">
+                                Ver todas <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="card bg-info text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4>{{ stats.total_clients }}</h4>
+                                    <p class="mb-0">Clientes</p>
+                                </div>
+                                <div class="display-4">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('admin_clients') }}" class="text-white">
+                                Ver todos <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="card bg-warning text-dark h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4>{{ stats.available_seats }}/{{ stats.total_seats }}</h4>
+                                    <p class="mb-0">Assentos Disponíveis</p>
+                                </div>
+                                <div class="display-4">
+                                    <i class="fas fa-chair"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class="text-dark">
+                                {% if stats.total_seats > 0 %}
+                                {{ "%.1f"|format(stats.available_seats / stats.total_seats * 100) }}% disponível
+                                {% else %}
+                                0% disponível
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-bolt"></i> Ações Rápidas
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('admin_add_flight') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-plus"></i> Cadastrar Novo Voo
+                                </a>
+                                <a href="{{ url_for('admin_search_clients') }}" class="btn btn-outline-info">
+                                    <i class="fas fa-search"></i> Buscar Cliente
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle"></i> Sistema
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Estruturas de Dados Utilizadas:</strong></p>
+                            <ul>
+                                <li><strong>Dicionário:</strong> Autenticação de usuários e reservas</li>
+                                <li><strong>Árvore B:</strong> Gestão de clientes com consultas otimizadas</li>
+                                <li><strong>Grafo:</strong> Simulação de rotas e conexões entre voos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
