@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes da Reserva - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2><i class="fas fa-ticket-alt"></i> Detalhes da Reserva</h2>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <strong>Reserva: {{ reservation.codigo_reserva }}</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Dados do Cliente</h5>
+                            <p><strong>Nome:</strong> {{ reservation.nome }}</p>
+                            <p><strong>CPF:</strong> {{ reservation.cpf }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Informações da Reserva</h5>
+                            <p><strong>Data da Viagem:</strong> {{ reservation.data_viagem }}</p>
+                            <p><strong>Data da Reserva:</strong> {{ reservation.data_reserva }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="badge bg-success">{{ reservation.status }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <h5>Voos</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Origem</th>
+                                <th>Destino</th>
+                                <th>Aeronave</th>
+                                <th>Preço</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flight in flights %}
+                            <tr>
+                                <td>{{ flight.codigo }}</td>
+                                <td>{{ flight.origem }}</td>
+                                <td>{{ flight.destino }}</td>
+                                <td>{{ flight.tipo_aeronave }}</td>
+                                <td>R$ {{ "%.2f"|format(flight.preco) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="4">Total</th>
+                                <th>R$ {{ "%.2f"|format(reservation.preco_total) }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <p><strong>Milhas Acumuladas:</strong> {{ reservation.milhas_acumuladas }}</p>
+                </div>
+            </div>
+            
+            <a href="{{ url_for('admin_reservations') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <a href="{{ url_for('admin_client_details', cpf=reservation.cpf) }}" class="btn btn-outline-primary">
+                <i class="fas fa-user"></i> Ver Cliente
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

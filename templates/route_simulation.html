@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Simular Rotas - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2><i class="fas fa-route"></i> Simular Rotas</h2>
+    <p class="text-muted">Use nosso sistema de grafos para encontrar todas as rotas possíveis entre dois destinos</p>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('simulate_route') }}">
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label for="origin" class="form-label">Origem</label>
+                        <select class="form-select" id="origin" name="origin" required>
+                            <option value="">Selecione a origem</option>
+                            {% for airport in airports|sort %}
+                            <option value="{{ airport }}" {% if origin == airport %}selected{% endif %}>{{ airport }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label for="destination" class="form-label">Destino</label>
+                        <select class="form-select" id="destination" name="destination" required>
+                            <option value="">Selecione o destino</option>
+                            {% for airport in airports|sort %}
+                            <option value="{{ airport }}" {% if destination == airport %}selected{% endif %}>{{ airport }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-calculator"></i> Simular
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if routes is not none %}
+    <h3>Rotas Encontradas: {{ origin }} → {{ destination }}</h3>
+    
+    {% if routes %}
+    <p class="text-muted">{{ routes|length }} rota(s) encontrada(s), ordenadas por preço</p>
+    
+    <div class="row">
+        {% for route in routes %}
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header {% if route.stops == 0 %}bg-success{% else %}bg-info{% endif %} text-white">
+                    <strong>{% if route.stops == 0 %}Voo Direto{% else %}{{ route.stops }} Conexão(ões){% endif %}</strong>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-center align-items-center mb-3">
+                        {% for flight in route.flights %}
+                        <div class="text-center">
+                            <span class="badge bg-dark">{{ flight.origem }}</span>
+                        </div>
+                        <div class="mx-2">
+                            <i class="fas fa-plane text-primary"></i>
+                            <small class="d-block">{{ flight.codigo }}</small>
+                        </div>
+                        {% if loop.last %}
+                        <div class="text-center">
+                            <span class="badge bg-dark">{{ flight.destino }}</span>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Voo</th>
+                                <th>Trecho</th>
+                                <th>Preço</th>
+                                <th>Milhas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flight in route.flights %}
+                            <tr>
+                                <td>{{ flight.codigo }}</td>
+                                <td>{{ flight.origem }} → {{ flight.destino }}</td>
+                                <td>R$ {{ "%.2f"|format(flight.preco) }}</td>
+                                <td>{{ flight.milhas }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="2">Total</th>
+                                <th>R$ {{ "%.2f"|format(route.total_price) }}</th>
+                                <th>{{ route.total_miles }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <form method="POST" action="{{ url_for('book_route') }}">
+                        {% for flight in route.flights %}
+                        <input type="hidden" name="flight_codes" value="{{ flight.codigo }}">
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-shopping-cart"></i> Reservar esta Rota
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i> Não foram encontradas rotas entre {{ origin }} e {{ destination }}.
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

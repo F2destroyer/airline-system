@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Resultados da Busca - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2><i class="fas fa-plane"></i> Resultados: {{ origin }} → {{ destination }}</h2>
+    
+    <a href="{{ url_for('search_flights') }}" class="btn btn-outline-secondary mb-4">
+        <i class="fas fa-arrow-left"></i> Nova Busca
+    </a>
+    
+    <h3 class="mb-3">Voos Diretos</h3>
+    {% if direct_flights %}
+    <div class="row mb-5">
+        {% for flight in direct_flights %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card card-flight h-100">
+                <div class="card-header bg-success text-white">
+                    <strong>{{ flight.codigo }}</strong> - Voo Direto
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ flight.origem }} <i class="fas fa-arrow-right"></i> {{ flight.destino }}
+                    </h5>
+                    <p class="card-text">
+                        <i class="fas fa-plane"></i> {{ flight.tipo_aeronave }}<br>
+                        <i class="fas fa-road"></i> {{ flight.milhas }} milhas<br>
+                        <i class="fas fa-chair"></i> {{ flight.assentos_disponiveis }} assentos disponíveis
+                    </p>
+                    <h4 class="text-success">R$ {{ "%.2f"|format(flight.preco) }}</h4>
+                </div>
+                <div class="card-footer">
+                    {% if flight.assentos_disponiveis > 0 %}
+                    <a href="{{ url_for('book_flight', flight_code=flight.codigo) }}" class="btn btn-primary w-100">
+                        <i class="fas fa-shopping-cart"></i> Reservar
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary w-100" disabled>Esgotado</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info mb-5">
+        <i class="fas fa-info-circle"></i> Não há voos diretos disponíveis para este trecho.
+    </div>
+    {% endif %}
+    
+    <h3 class="mb-3">Voos com Conexão</h3>
+    {% if connections %}
+    <div class="row">
+        {% for connection in connections %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <strong>Rota com {{ connection|length - 1 }} conexão(ões)</strong>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush mb-3">
+                        {% for flight in connection %}
+                        <li class="list-group-item">
+                            <strong>{{ flight.codigo }}</strong>: {{ flight.origem }} → {{ flight.destino }}
+                            <span class="badge bg-secondary">R$ {{ "%.2f"|format(flight.preco) }}</span>
+                            <span class="badge bg-primary">{{ flight.milhas }} milhas</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <p class="mb-1">
+                        <strong>Total:</strong> R$ {{ "%.2f"|format(connection|sum(attribute='preco')) }}
+                    </p>
+                    <p class="mb-0">
+                        <strong>Milhas:</strong> {{ connection|sum(attribute='milhas') }}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <form method="POST" action="{{ url_for('book_route') }}">
+                        {% for flight in connection %}
+                        <input type="hidden" name="flight_codes" value="{{ flight.codigo }}">
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-shopping-cart"></i> Reservar Rota
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Não há conexões disponíveis para este trecho.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

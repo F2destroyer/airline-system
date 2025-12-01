@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Buscar Voos - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2><i class="fas fa-search"></i> Buscar Voos</h2>
+    <p class="text-muted">Encontre voos diretos e conexões para seu destino</p>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('search_flights') }}">
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label for="origin" class="form-label">Origem</label>
+                        <select class="form-select" id="origin" name="origin" required>
+                            <option value="">Selecione a origem</option>
+                            {% for origin in origins|sort %}
+                            <option value="{{ origin }}">{{ origin }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label for="destination" class="form-label">Destino</label>
+                        <select class="form-select" id="destination" name="destination" required>
+                            <option value="">Selecione o destino</option>
+                            {% for dest in destinations|sort %}
+                            <option value="{{ dest }}">{{ dest }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

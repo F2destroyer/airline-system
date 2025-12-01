@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{% if action == 'add' %}Cadastrar Voo{% else %}Editar Voo{% endif %} - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plane"></i>
+                        {% if action == 'add' %}Cadastrar Novo Voo{% else %}Editar Voo: {{ flight.codigo }}{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="codigo" class="form-label">Código do Voo</label>
+                                <input type="text" class="form-control" id="codigo" name="codigo" 
+                                       value="{{ flight.codigo|default('') }}" 
+                                       {% if action == 'edit' %}readonly{% endif %}
+                                       placeholder="Ex: ED001" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="origem" class="form-label">Origem</label>
+                                <input type="text" class="form-control" id="origem" name="origem" 
+                                       value="{{ flight.origem|default('') }}"
+                                       placeholder="Ex: GRU" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="destino" class="form-label">Destino</label>
+                                <input type="text" class="form-control" id="destino" name="destino" 
+                                       value="{{ flight.destino|default('') }}"
+                                       placeholder="Ex: GIG" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="milhas" class="form-label">Milhas</label>
+                                <input type="number" class="form-control" id="milhas" name="milhas" 
+                                       value="{{ flight.milhas|default(0) }}"
+                                       min="0" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="preco" class="form-label">Preço (R$)</label>
+                                <input type="number" step="0.01" class="form-control" id="preco" name="preco" 
+                                       value="{{ flight.preco|default(0) }}"
+                                       min="0" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="assentos" class="form-label">Número de Assentos</label>
+                                <input type="number" class="form-control" id="assentos" name="assentos" 
+                                       value="{{ flight.assentos|default(0) }}"
+                                       min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="tipo_aeronave" class="form-label">Tipo de Aeronave</label>
+                            <select class="form-select" id="tipo_aeronave" name="tipo_aeronave" required>
+                                <option value="">Selecione...</option>
+                                <option value="Boeing 737" {% if flight.tipo_aeronave == 'Boeing 737' %}selected{% endif %}>Boeing 737</option>
+                                <option value="Boeing 777" {% if flight.tipo_aeronave == 'Boeing 777' %}selected{% endif %}>Boeing 777</option>
+                                <option value="Boeing 787" {% if flight.tipo_aeronave == 'Boeing 787' %}selected{% endif %}>Boeing 787</option>
+                                <option value="Airbus A320" {% if flight.tipo_aeronave == 'Airbus A320' %}selected{% endif %}>Airbus A320</option>
+                                <option value="Airbus A350" {% if flight.tipo_aeronave == 'Airbus A350' %}selected{% endif %}>Airbus A350</option>
+                                <option value="Airbus A380" {% if flight.tipo_aeronave == 'Airbus A380' %}selected{% endif %}>Airbus A380</option>
+                                <option value="Embraer E195" {% if flight.tipo_aeronave == 'Embraer E195' %}selected{% endif %}>Embraer E195</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save"></i> 
+                                {% if action == 'add' %}Cadastrar Voo{% else %}Salvar Alterações{% endif %}
+                            </button>
+                            <a href="{{ url_for('admin_flights') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

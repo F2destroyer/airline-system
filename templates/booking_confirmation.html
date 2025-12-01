@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Reserva Confirmada - Linhas Aéreas ED-II{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <div class="display-1 text-success mb-3">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1>Reserva Confirmada!</h1>
+        <p class="lead">Sua reserva foi realizada com sucesso.</p>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <strong><i class="fas fa-ticket-alt"></i> Código da Reserva</strong>
+                </div>
+                <div class="card-body text-center">
+                    <h1 class="display-4 text-primary">{{ reservation_code }}</h1>
+                    <p class="text-muted">Guarde este código para consultas futuras</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Dados do Passageiro</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Nome:</strong> {{ nome }}</p>
+                            <p><strong>CPF:</strong> {{ cpf }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Data da Viagem:</strong> {{ data_viagem }}</p>
+                            <p><strong>Milhas Acumuladas:</strong> {{ total_miles }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Voos Reservados</strong>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Voo</th>
+                                <th>Trecho</th>
+                                <th>Aeronave</th>
+                                <th>Preço</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flight in flights %}
+                            <tr>
+                                <td><strong>{{ flight.codigo }}</strong></td>
+                                <td>{{ flight.origem }} → {{ flight.destino }}</td>
+                                <td>{{ flight.tipo_aeronave }}</td>
+                                <td>R$ {{ "%.2f"|format(flight.preco) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-success">
+                            <tr>
+                                <th colspan="3">Total Pago</th>
+                                <th>R$ {{ "%.2f"|format(total_price) }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-home"></i> Voltar ao Início
+                </a>
+                <a href="{{ url_for('check_reservation') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-search"></i> Consultar Outra Reserva
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
